@@ -1,4 +1,4 @@
-# GPT-2 Reimplementation README
+# GPT-2 Reimplementation
 
 ## 📌 Project Overview
 This repository contains a reimplementation of OpenAI's **GPT-2** model from scratch. The goal is to understand and reproduce the core functionalities of GPT-2, including **tokenization, transformer architecture, training, and inference**.
