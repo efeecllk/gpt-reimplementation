@@ -4,6 +4,13 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 
+class Block(nn.Module):
+    def __init__(self,config):
+        super().__init__()
+        self.ln_1 = nn.LayerNorm(config.n_embd)
+        self.attn = CasualSelfAttention(config)
+        self.ln_2 = nn.LayerNorm(config.n_embd)
+        self.mlp = MLP(config)
 
 @dataclass
 class GPTConfig:
@@ -14,7 +21,7 @@ class GPTConfig:
     n_head: int = 6
     n_embd: int = 384
 
-class GPT(nn.module):
+class GPT(nn.Module):
     def __init__(self,config):
         super(GPT,self).__init__()
         self.config = config
