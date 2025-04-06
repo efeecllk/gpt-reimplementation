@@ -142,8 +142,18 @@ class GPT(nn.Module):
 
         return model
 
-
+num_return_sequences = 5
+max_length = 30
 
 model = GPT.from_pretrained('gpt2')
-print('it works')
-print(model)
+model.eval()
+model.to('cuda')
+
+
+import tiktoken
+
+enc = tiktoken.get_encoding('gpt2')
+tokens = enc.encode("Hello, I'm a language model,")
+tokens = torch.tensor(tokens, dtype=torch.long)  # (8,)
+tokens = tokens.unsqueeze(0).repeat(num_return_sequences, 1)  # (5, 8)
+x = tokens.to('cuda')
