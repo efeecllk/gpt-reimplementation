@@ -4,6 +4,13 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
+# Attempt to autodetect the device
+device = "cpu"
+if torch.cuda.is_available():
+    device = "cuda"
+elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+    device = "mps"
+print(f"using device: {device}")
 
 class CasualSelfAttention(nn.Module):
     def __init__(self, config):
@@ -51,7 +58,7 @@ class MLP(nn.Module):
 
 
 class Block(nn.Module):
-    def __init__(self,config):
+    def __init__(self, config):
         super().__init__()
         self.ln_1 = nn.LayerNorm(config.n_embd)
         self.attn = CasualSelfAttention(config)
@@ -94,12 +101,11 @@ class GPT(nn.Module):
         for block in self.transformer.h:
             x = block(x)
         x = self.transformer.ln_f(x)
-        logits = self.lm_head(x) #
+        logits = self.lm_head(x)
         loss = None
         if targets is not None:
             loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
         return logits, loss
-
 
     @classmethod
     def from_pretrained(cls, model_type):
@@ -108,26 +114,21 @@ class GPT(nn.Module):
         print("loading weights from pretrained gpt: %s" % model_type)
 
         config_args = {
-            'gpt2':         dict(n_layer=12, n_head=12, n_embd=768),  # 124
-            'gpt2-medium':  dict(n_layer=24, n_head=16, n_embd=1024), # 350
-            'gpt2-large':   dict(n_layer=36, n_head=20, n_embd=1280), # 774
-            'gpt2-xl':      dict(n_layer=48, n_head=25, n_embd=1600), # 1558
+            'gpt2':         dict(n_layer=12, n_head=12, n_embd=768),  # 124M parameters
+            'gpt2-medium':  dict(n_layer=24, n_head=16, n_embd=1024), # 350M parameters
+            'gpt2-large':   dict(n_layer=36, n_head=20, n_embd=1280), # 774M parameters
+            'gpt2-xl':      dict(n_layer=48, n_head=25, n_embd=1600), # 1558M parameters
         }[model_type]
-        config_args['vocab_size'] = 50257 #
-        config_args['block_size'] = 1024 #
+        config_args['vocab_size'] = 50257
+        config_args['block_size'] = 1024
         config = GPTConfig(**config_args)
         model = GPT(config)
         sd = model.state_dict()
-        sd_keys = sd.keys()
-        sd_keys = [k for k in sd_keys if not k.endswith('.attn.bias')]
-
+        sd_keys = [k for k in sd.keys() if not k.endswith('.attn.bias')]
 
         model_hf = GPT2LMHeadModel.from_pretrained(model_type)
         sd_hf = model_hf.state_dict()
-
-        sd_keys_hf = sd_hf.keys()
-        sd_keys_hf = [k for k in sd_keys_hf if not k.endswith('.attn.masked_bias')] #
-        sd_keys_hf = [k for k in sd_keys_hf if not k.endswith('.attn.bias')]
+        sd_keys_hf = [k for k in sd_hf.keys() if not k.endswith('.attn.masked_bias') and not k.endswith('.attn.bias')]
         transposed = ['attn.c_attn.weight', 'attn.c_proj.weight', 'mlp.c_fc.weight', 'mlp.c_proj.weight']
         assert len(sd_keys_hf) == len(sd_keys), f"mismatched keys: {len(sd_keys_hf)} != {len(sd_keys)}"
         for k in sd_keys_hf:
@@ -142,36 +143,38 @@ class GPT(nn.Module):
 
         return model
 
+# Generation parameters
 num_return_sequences = 5
 max_length = 30
 
+# Initialize the model from pretrained weights and move it to the proper device
 model = GPT.from_pretrained('gpt2')
 model.eval()
-model.to('cuda')
-
+model.to(device)
 
 import tiktoken
 
+# Initialize tokenizer and encode the prompt
 enc = tiktoken.get_encoding('gpt2')
 tokens = enc.encode("Hello, I'm a language model,")
-tokens = torch.tensor(tokens, dtype=torch.long) 
-tokens = tokens.unsqueeze(0).repeat(num_return_sequences, 1)  
-x = tokens.to('cuda')
+tokens = torch.tensor(tokens, dtype=torch.long).unsqueeze(0).repeat(num_return_sequences, 1)
+x = tokens.to(device)
 
-
+# Set the random seed for reproducibility on CPU
 torch.manual_seed(42)
-torch.cuda.manual_seed(42)
+
+# Generate tokens until reaching max_length
 while x.size(1) < max_length:
     with torch.no_grad():
-        logits = model(x) 
+        logits, _ = model(x)
         logits = logits[:, -1, :]
         probs = F.softmax(logits, dim=1)
         topk_probs, topk_indices = torch.topk(probs, 50, dim=1)
-        ix = torch.multinomial(topk_probs, 1)  
+        ix = torch.multinomial(topk_probs, 1)
         xcol = torch.gather(topk_indices, -1, ix)
         x = torch.cat((x, xcol), dim=1)
 
 for i in range(num_return_sequences):
-    tokens = x[i, :max_length].tolist()
-    decoded = enc.decode(tokens)
+    tokens_list = x[i, :max_length].tolist()
+    decoded = enc.decode(tokens_list)
     print(">", decoded)
