@@ -182,9 +182,9 @@ else:
 
 print(f"Using device: {device}")
 
-torch.manual_seed(1337)
+torch.manual_seed(42)
 if torch.cuda.is_available():
-    torch.cuda.manual_seed(1337)
+    torch.cuda.manual_seed(42)
 #
 
 
