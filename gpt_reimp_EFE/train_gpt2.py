@@ -143,12 +143,26 @@ class GPT(nn.Module):
         return model
 #
 
-device = "cpu"
+# Define device handling properly with fallback
+device = "cpu"  # Default fallback
 if torch.cuda.is_available():
     device = "cuda"
 elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-    device = "mps"
-print(f"using device: {device}")
+    try:
+        # Test MPS with a small tensor operation
+        test_tensor = torch.ones(1).to("mps")
+        test_tensor = test_tensor + 1
+        device = "mps"
+        print(f"MPS is available and working, using device: {device}")
+    except Exception as e:
+        print(f"MPS is available but not working properly: {e}")
+        print("Falling back to CPU")
+        device = "cpu"
+else:
+    print("Using CPU")
+
+print(f"Using device: {device}")
+
 
 #
 
@@ -164,39 +178,71 @@ with open('input.txt', 'r') as f:
 
 text = text[:1000]
 
+
+
 tokens = enc.encode(text)
-B,T= 4,32
-buf = torch.zeros(tokens[B*T]+1)
-x = buf[:-1].view(B,T)
-y = buf[1:].view(B,T)
+
+# Create batches
+B, T = 4, 32  # batch size and sequence length
+# Make sure we have enough tokens for a complete batch
+if len(tokens) < B * T + 1:
+    raise ValueError(f"Not enough tokens. Need at least {B*T+1}, but got {len(tokens)}")
+
+# Create input-target pairs
+x = torch.tensor(tokens[:(B*T)], dtype=torch.long).view(B, T)
+y = torch.tensor(tokens[1:(B*T+1)], dtype=torch.long).view(B, T)
+
+
+# Move to device AFTER creating tensors
+x = x.to(device)
+y = y.to(device)
+
+# Initialize the model on the same device
+model = GPT(GPTConfig())
+model = model.to(device)
+
+# Forward pass
+try:
+    logits, loss = model(x, targets=y)  # Pass y as targets
+    print("logits shape:", logits.shape)
+    print("loss:", loss.item() if loss is not None else None)
+except RuntimeError as e:
+    print(f"Error with MPS device: {e}")
+    print("Falling back to CPU")
+    device = "cpu"
+    x = x.to(device)
+    y = y.to(device)
+    model = model.to(device)
+    logits, loss = model(x, targets=y)
+    print("logits shape:", logits.shape)
+    print("loss:", loss.item() if loss is not None else None)
 
 #get logits
-model = GPT(GPTConfig())
-model.to(device)
-logits, loss= model(x)
-print("logits shape:", logits.shape)
-import sys; sys.exit(0)
+# model = GPT(GPTConfig())
+# model.to(device)
+# logits, loss= model(x)
+# print("logits shape:", logits.shape)
 # tokens = torch.tensor(tokens, dtype=torch.long)
 # tokens = tokens.unsqueeze(0).repeat(num_return_sequences, 1)
-
-
-device = torch.device(device)
-x = tokens.to(device)
-
-
-torch.manual_seed(42)
-torch.cuda.manual_seed(42)
-while x.size(1) < max_length:
-    with torch.no_grad():
-        logits, _= model(x)
-        logits = logits[:, -1, :]
-        probs = F.softmax(logits, dim=1)
-        topk_probs, topk_indices = torch.topk(probs, 50, dim=1)
-        ix = torch.multinomial(topk_probs, 1)
-        xcol = torch.gather(topk_indices, -1, ix)
-        x = torch.cat((x, xcol), dim=1)
-
-for i in range(num_return_sequences):
-    tokens_list = x[i, :max_length].tolist()
-    decoded = enc.decode(tokens_list)
-    print(">", decoded)
+#
+#
+# device = torch.device(device)
+# x = tokens.to(device)
+#
+#
+# torch.manual_seed(42)
+# torch.cuda.manual_seed(42)
+# while x.size(1) < max_length:
+#     with torch.no_grad():
+#         logits, _= model(x)
+#         logits = logits[:, -1, :]
+#         probs = F.softmax(logits, dim=1)
+#         topk_probs, topk_indices = torch.topk(probs, 50, dim=1)
+#         ix = torch.multinomial(topk_probs, 1)
+#         xcol = torch.gather(topk_indices, -1, ix)
+#         x = torch.cat((x, xcol), dim=1)
+#
+# for i in range(num_return_sequences):
+#     tokens_list = x[i, :max_length].tolist()
+#     decoded = enc.decode(tokens_list)
+#     print(">", decoded)
