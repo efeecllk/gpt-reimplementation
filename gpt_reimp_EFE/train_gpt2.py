@@ -188,6 +188,8 @@ B, T = 4, 32  # batch size and sequence length
 if len(tokens) < B * T + 1:
     raise ValueError(f"Not enough tokens. Need at least {B*T+1}, but got {len(tokens)}")
 
+
+#Chanege to buff here
 # Create input-target pairs
 x = torch.tensor(tokens[:(B*T)], dtype=torch.long).view(B, T)
 y = torch.tensor(tokens[1:(B*T+1)], dtype=torch.long).view(B, T)
@@ -200,6 +202,15 @@ y = y.to(device)
 # Initialize the model on the same device
 model = GPT(GPTConfig())
 model = model.to(device)
+#oprimize
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+for i in range(50):
+    optimizer.zero_grad()
+    logits, loss = model(x, y)  # Pass y as targets
+    loss.backward()
+    optimizer.step()
+    print(f"Step {i}, Loss: {loss.item()}")
+
 
 # Forward pass
 try:
