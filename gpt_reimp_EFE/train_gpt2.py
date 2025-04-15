@@ -206,15 +206,27 @@ model = GPT(GPTConfig())
 model = model.to(device)
 #oprimize
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+
+losses = []
 for i in range(50):
     optimizer.zero_grad()
     logits, loss = model(x, y)  # Pass y as targets
     loss.backward()
     optimizer.step()
+    losses.append(loss.item())
     print(f"Step {i}, Loss: {loss.item()}")
 
+import matplotlib.pyplot as plt
 
-# Forward pass
+plt.figure(figsize=(10, 6))
+plt.plot(losses, marker='o')
+plt.title("Training Loss over Steps")
+plt.xlabel("Step")
+plt.ylabel("Loss")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+    # Forward pass
 try:
     logits, loss = model(x, targets=y)  # Pass y as targets
     print("logits shape:", logits.shape)
