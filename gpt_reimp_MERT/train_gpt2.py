@@ -195,7 +195,11 @@ max_length = 30
 #get data
 import tiktoken
 enc = tiktoken.get_encoding('gpt2')
-with open('input.txt', 'r') as f:
+import os
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+input_path = os.path.join(script_dir, 'input.txt')
+with open(input_path, 'r', encoding='utf-8') as f:
     text = f.read()
 
 text = text[:1000]
