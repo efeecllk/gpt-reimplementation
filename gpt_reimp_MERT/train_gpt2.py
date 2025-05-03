@@ -1,5 +1,6 @@
 
 import math
+import inspect
 from dataclasses import dataclass
 import torch
 import torch.nn as nn
@@ -160,6 +161,30 @@ class GPT(nn.Module):
 
         return model
     
+    def configure_optimizers(self, weight_decay, learning_rate, device):
+        # Gradients gerektiren tüm aday parametrelerle başla
+        param_dict = {pn: p for pn, p in self.named_parameters()}
+        param_dict = {pn: p for pn, p in param_dict.items() if p.requires_grad}
+        # Optimizasyon gruplarını oluştur. 2D parametreler weight decay uygulanacak, diğerleri uygulanmayacak.
+        # Yani matmul'lardaki ve embedding'lerdeki tüm ağırlık tensörleri decay olacak, bias'lar ve layernorm'lar olmayacak.
+        decay_params = [p for n, p in param_dict.items() if p.dim() >= 2]
+        nodecay_params = [p for n, p in param_dict.items() if p.dim() < 2]
+        optim_groups = [
+            {'params': decay_params, 'weight_decay': weight_decay},
+            {'params': nodecay_params, 'weight_decay': 0.0}
+        ]
+        num_decay_params = sum(p.numel() for p in decay_params)
+        num_nodecay_params = sum(p.numel() for p in nodecay_params)
+        print(f"num decayed parameter tensors: {len(decay_params)}, with {num_decay_params:,} parameters")
+        print(f"num non-decayed parameter tensors: {len(nodecay_params)}, with {num_nodecay_params:,} parameters")
+        # AdamW optimizasyonu oluştur ve varsa birleştirilmiş versiyonunu kullan
+        fused_available = 'fused' in inspect.signature(torch.optim.AdamW).parameters
+        use_fused = fused_available and 'cuda' in device
+        print(f"using fused AdamW: {use_fused}")
+        optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=(0.9, 0.95), eps=1e-8, fused=use_fused)
+        return optimizer
+ 
+    
 import time
 
 # Define device handling properly with fallback
@@ -248,8 +273,8 @@ def get_lr(it):
     coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # coeff starts at 1 and goes to 0
     return min_lr + coeff * (max_lr - min_lr)
 
-#oprimize
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, betas=(0.9, 0.95), eps=1e-8)
+#optimize
+optimizer = model.configure_optimizers(weight_decay=0.1, learning_rate=6e-4, device=device)
 
 import time
 import sys
