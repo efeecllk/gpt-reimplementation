@@ -231,6 +231,7 @@ y = y.to(device)
 # Initialize the model on the same device
 model = GPT(GPTConfig())
 model = model.to(device)
+#model = torch.compile(model)
 #oprimize
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
 
