@@ -231,7 +231,7 @@ model = GPT(GPTConfig(vocab_size=50304))
 model = model.to(device)
 #model = torch.compile(model)
 #oprimize
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, betas=(0.9, 0.95), eps=1e-8)
 
 import time
 import sys
@@ -243,13 +243,14 @@ for i in range(50):
     with torch.autocast(device_type=device, dtype=torch.bfloat16):
         logits, loss = model(x, y)  # Pass y as targets
     loss.backward()
+    norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
     optimizer.step()
     torch.cuda.synchronize() if device == "cuda" else None
     t1 = time.time()
     dt = (t1 - t0) * 1000
     tokens_per_sec = (B * T) / (t1 - t0)
     losses.append(loss.item())
-    print(f"step {i}, loss: {loss.item()}, dt: {dt:.2f}ms, tok/sec: {tokens_per_sec:.2f}")
+    print(f"step {i}, loss: {loss.item()}, norm: {norm:.4f}, dt: {dt:.2f}ms, tok/sec: {tokens_per_sec:.2f}")
 
 import matplotlib.pyplot as plt
 
