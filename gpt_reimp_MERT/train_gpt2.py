@@ -30,7 +30,7 @@ class CasualSelfAttention(nn.Module):
         v = v.view(B, T, self.n_head, self.n_embd // self.n_head).transpose(1, 2)
 
         y = F.scaled_dot_product_attention(q, k, v, is_causal=True) # flash attention
-        
+
         y = y.transpose(1, 2).contiguous().view(B, T, C)
         y = self.c_proj(y)
         return y
@@ -227,7 +227,7 @@ x = x.to(device)
 y = y.to(device)
 
 # Initialize the model on the same device
-model = GPT(GPTConfig())
+model = GPT(GPTConfig(vocab_size=50304))
 model = model.to(device)
 #model = torch.compile(model)
 #oprimize
