@@ -161,13 +161,19 @@ class GPT(nn.Module):
                     sd[k].copy_(sd_hf[k])
 
         return model
+    
+import time
+
 # Define device handling properly with fallback
-device = "cpu"  # Default fallback
+import time
+import sys
+
+device = "cpu"
 if torch.cuda.is_available():
     device = "cuda"
+    torch.cuda.manual_seed(1337)
 elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
     try:
-        # Test MPS with a small tensor operation
         test_tensor = torch.ones(1).to("mps")
         test_tensor = test_tensor + 1
         device = "mps"
@@ -182,8 +188,8 @@ else:
 print(f"Using device: {device}")
 
 torch.manual_seed(42)
-if torch.cuda.is_available():
-    torch.cuda.manual_seed(42)
+
+torch.set_float32_matmul_precision('high')
 
 
 
@@ -213,7 +219,6 @@ if len(tokens) < B * T + 1:
     raise ValueError(f"Not enough tokens. Need at least {B*T+1}, but got {len(tokens)}")
 
 
-#Chanege to buff here
 # Create input-target pairs
 x = torch.tensor(tokens[:(B*T)], dtype=torch.long).view(B, T)
 y = torch.tensor(tokens[1:(B*T+1)], dtype=torch.long).view(B, T)
@@ -229,14 +234,22 @@ model = model.to(device)
 #oprimize
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
 
+import time
+import sys
+
 losses = []
 for i in range(50):
+    t0 = time.time()
     optimizer.zero_grad()
     logits, loss = model(x, y)  # Pass y as targets
     loss.backward()
     optimizer.step()
+    torch.cuda.synchronize() if device == "cuda" else None
+    t1 = time.time()
+    dt = (t1 - t0) * 1000
+    tokens_per_sec = (B * T) / (t1 - t0)
     losses.append(loss.item())
-    print(f"Step {i}, Loss: {loss.item()}")
+    print(f"step {i}, loss: {loss.item()}, dt: {dt:.2f}ms, tok/sec: {tokens_per_sec:.2f}")
 
 import matplotlib.pyplot as plt
 
@@ -248,6 +261,8 @@ plt.ylabel("Loss")
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+sys.exit(0)
     # Forward pass
 try:
     logits, loss = model(x, targets=y)  # Pass y as targets
