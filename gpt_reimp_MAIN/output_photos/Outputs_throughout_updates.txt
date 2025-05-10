@@ -57,3 +57,15 @@ step 7, loss: 3.93896484375, lr 4.8000e-04, norm: 17.3404, dt: 68.56ms, tok/sec:
 step 8, loss: 2.9758987426757812, lr 5.4000e-04, norm: 12.8731, dt: 67.90ms, tok/sec: 1885.11
 step 9, loss: 2.9892425537109375, lr 6.0000e-04, norm: 24.2579, dt: 68.23ms, tok/sec: 1876.04
 step 10, loss: 1.7214126586914062, lr 6.0000e-04, norm: 9.1152, dt: 67.71ms, tok/sec: 1890.53
+
+After gradient accumlation
+step 1, loss: 0.002310633659362793, lr 1.2000e-04, norm: 0.0018, dt: 74.29ms, tok/sec: 1722.94
+step 2, loss: 0.002062499523162842, lr 1.8000e-04, norm: 0.0016, dt: 76.53ms, tok/sec: 1672.60
+step 3, loss: 0.0018685460090637207, lr 2.4000e-04, norm: 0.0016, dt: 69.73ms, tok/sec: 1835.68
+step 4, loss: 0.0016887485980987549, lr 3.0000e-04, norm: 0.0018, dt: 67.91ms, tok/sec: 1884.93
+step 5, loss: 0.0014928877353668213, lr 3.6000e-04, norm: 0.0026, dt: 68.87ms, tok/sec: 1858.48
+step 6, loss: 0.0014208555221557617, lr 4.2000e-04, norm: 0.0055, dt: 67.90ms, tok/sec: 1885.23
+step 7, loss: 0.0011592283844947815, lr 4.8000e-04, norm: 0.0027, dt: 67.75ms, tok/sec: 1889.19
+step 8, loss: 0.0011629611253738403, lr 5.4000e-04, norm: 0.0066, dt: 67.88ms, tok/sec: 1885.75
+step 9, loss: 0.0009995661675930023, lr 6.0000e-04, norm: 0.0044, dt: 70.09ms, tok/sec: 1826.25
+step 10, loss: 0.0007146615535020828, lr 6.0000e-04, norm: 0.0032, dt: 69.54ms, tok/sec: 1840.70

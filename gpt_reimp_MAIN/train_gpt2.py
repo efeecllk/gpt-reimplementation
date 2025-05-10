@@ -236,11 +236,16 @@ text = text[:1000]
 tokens = enc.encode(text)
 
 # Create batches
+total_batch_size = 524288  # Total batch size in tokens
 B, T = 4, 32  # batch size and sequence length
 # Make sure we have enough tokens for a complete batch
 if len(tokens) < B * T + 1:
     raise ValueError(f"Not enough tokens. Need at least {B*T+1}, but got {len(tokens)}")
 
+assert total_batch_size % (B * T) == 0, "make sure total_batch_size is divisible by B * T"
+grad_accum_steps = total_batch_size // (B * T)
+print(f"total desired batch size: {total_batch_size}")
+print(f"=> calculated gradient accumulation steps: {grad_accum_steps}")
 
 # Create input-target pairs
 x = torch.tensor(tokens[:(B*T)], dtype=torch.long).view(B, T)
@@ -283,8 +288,11 @@ losses = []
 for step in range(max_steps):
     t0 = time.time()
     optimizer.zero_grad()
+    loss_accum = 0.0
     with torch.autocast(device_type=device, dtype=torch.bfloat16):
         logits, loss = model(x, y)  # Pass y as targets
+    loss = loss / grad_accum_steps
+    loss_accum += loss.detach()
     loss.backward()
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
     # determine and set the learning rate for this iteration
@@ -298,7 +306,7 @@ for step in range(max_steps):
     dt = (t1 - t0) * 1000
     tokens_per_sec = (B * T) / (t1 - t0)
     losses.append(loss.item())
-    print(f"step {step}, loss: {loss.item()}, lr {lr:.4e}, norm: {norm:.4f}, dt: {dt:.2f}ms, tok/sec: {tokens_per_sec:.2f}")
+    print(f"step {step}, loss: {loss_accum.item()}, lr {lr:.4e}, norm: {norm:.4f}, dt: {dt:.2f}ms, tok/sec: {tokens_per_sec:.2f}")
 
 import matplotlib.pyplot as plt
 
