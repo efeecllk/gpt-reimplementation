@@ -1,0 +1,59 @@
+After TF32
+step 1, loss: 9.156148910522461, dt: 96.09ms, tok/sec: 1332.15
+step 2, loss: 8.309456825256348, dt: 89.78ms, tok/sec: 1425.73
+step 3, loss: 7.190425872802734, dt: 89.76ms, tok/sec: 1425.96
+step 4, loss: 6.2996416091918945, dt: 90.14ms, tok/sec: 1420.04
+step 5, loss: 5.376052379608154, dt: 87.94ms, tok/sec: 1455.60
+step 6, loss: 4.664271831512451, dt: 90.04ms, tok/sec: 1421.58
+step 7, loss: 4.412774562835693, dt: 91.59ms, tok/sec: 1397.53
+step 8, loss: 4.126108646392822, dt: 88.07ms, tok/sec: 1453.47
+step 9, loss: 5.021510124206543, dt: 88.55ms, tok/sec: 1445.47
+step 10, loss: 3.9638984203338623, dt: 87.85ms, tok/sec: 1456.96
+
+After bfloat16
+step 1, loss: 9.15673828125, dt: 91.79ms, tok/sec: 1394.44
+step 2, loss: 8.3017578125, dt: 91.46ms, tok/sec: 1399.53
+step 3, loss: 7.189208984375, dt: 91.98ms, tok/sec: 1391.62
+step 4, loss: 6.29931640625, dt: 91.32ms, tok/sec: 1401.59
+step 5, loss: 5.3741455078125, dt: 93.11ms, tok/sec: 1374.70
+step 6, loss: 4.79443359375, dt: 92.35ms, tok/sec: 1386.06
+step 7, loss: 4.4981689453125, dt: 91.01ms, tok/sec: 1406.47
+step 8, loss: 4.2840576171875, dt: 90.77ms, tok/sec: 1410.23
+step 9, loss: 4.08642578125, dt: 91.47ms, tok/sec: 1399.41
+step 10, loss: 3.970458984375, dt: 91.82ms, tok/sec: 1394.02
+
+After switching to flash attention
+step 1, loss: 9.15771484375, dt: 83.26ms, tok/sec: 1537.27
+step 2, loss: 8.302978515625, dt: 83.01ms, tok/sec: 1541.92
+step 3, loss: 7.18896484375, dt: 82.62ms, tok/sec: 1549.30
+step 4, loss: 6.2974853515625, dt: 82.79ms, tok/sec: 1546.06
+step 5, loss: 5.3739013671875, dt: 82.50ms, tok/sec: 1551.46
+step 6, loss: 4.7183837890625, dt: 82.38ms, tok/sec: 1553.70
+step 7, loss: 4.4715576171875, dt: 82.52ms, tok/sec: 1551.17
+step 8, loss: 4.24267578125, dt: 82.69ms, tok/sec: 1547.98
+step 9, loss: 4.023193359375, dt: 82.43ms, tok/sec: 1552.76
+step 10, loss: 4.329833984375, dt: 82.57ms, tok/sec: 1550.29
+
+After gradient clipping and learning rate scheduler
+step 1, loss: 9.415771484375, lr 1.2000e-04, norm: 7.2595, dt: 91.52ms, tok/sec: 1398.56
+step 2, loss: 8.35400390625, lr 1.8000e-04, norm: 7.1708, dt: 90.11ms, tok/sec: 1420.49
+step 3, loss: 7.55419921875, lr 2.4000e-04, norm: 7.1196, dt: 89.84ms, tok/sec: 1424.71
+step 4, loss: 6.6500244140625, lr 3.0000e-04, norm: 7.1337, dt: 90.70ms, tok/sec: 1411.31
+step 5, loss: 5.7471923828125, lr 3.6000e-04, norm: 14.9585, dt: 91.26ms, tok/sec: 1402.54
+step 6, loss: 5.017242431640625, lr 4.2000e-04, norm: 17.3233, dt: 91.20ms, tok/sec: 1403.57
+step 7, loss: 3.9395751953125, lr 4.8000e-04, norm: 17.2782, dt: 90.03ms, tok/sec: 1421.70
+step 8, loss: 2.9708099365234375, lr 5.4000e-04, norm: 12.9161, dt: 92.10ms, tok/sec: 1389.76
+step 9, loss: 2.9598617553710938, lr 6.0000e-04, norm: 23.9009, dt: 90.97ms, tok/sec: 1407.06
+step 10, loss: 1.7027053833007812, lr 6.0000e-04, norm: 8.8673, dt: 90.42ms, tok/sec: 1415.61
+
+After weight decay and fused AdamW
+step 1, loss: 9.41650390625, lr 1.2000e-04, norm: 7.2595, dt: 70.55ms, tok/sec: 1814.42
+step 2, loss: 8.3544921875, lr 1.8000e-04, norm: 7.1709, dt: 73.25ms, tok/sec: 1747.38
+step 3, loss: 7.55615234375, lr 2.4000e-04, norm: 7.1152, dt: 68.34ms, tok/sec: 1873.00
+step 4, loss: 6.6483154296875, lr 3.0000e-04, norm: 7.1244, dt: 68.02ms, tok/sec: 1881.94
+step 5, loss: 5.74871826171875, lr 3.6000e-04, norm: 14.9489, dt: 68.78ms, tok/sec: 1860.89
+step 6, loss: 5.016082763671875, lr 4.2000e-04, norm: 17.3558, dt: 67.94ms, tok/sec: 1883.98
+step 7, loss: 3.93896484375, lr 4.8000e-04, norm: 17.3404, dt: 68.56ms, tok/sec: 1866.88
+step 8, loss: 2.9758987426757812, lr 5.4000e-04, norm: 12.8731, dt: 67.90ms, tok/sec: 1885.11
+step 9, loss: 2.9892425537109375, lr 6.0000e-04, norm: 24.2579, dt: 68.23ms, tok/sec: 1876.04
+step 10, loss: 1.7214126586914062, lr 6.0000e-04, norm: 9.1152, dt: 67.71ms, tok/sec: 1890.53
