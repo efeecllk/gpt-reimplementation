@@ -10,6 +10,15 @@ step 8, loss: 4.126108646392822, dt: 88.07ms, tok/sec: 1453.47
 step 9, loss: 5.021510124206543, dt: 88.55ms, tok/sec: 1445.47
 step 10, loss: 3.9638984203338623, dt: 87.85ms, tok/sec: 1456.96
 
+=== Generated Text (Temperature = 0.7) ===
+The future of artificial is is is time and garbage collector. Object is in null like. It garbage be better it.
+
+=== Generated Text (Temperature = 1.0) ===
+The future artificial intelligence garbage collection is is a time management. objects null function a time collector dispose will.
+
+=== Generated Text (Temperature = 0.5) ===
+Future artificial garbage collector is the time. Memory management be better than disposal resources null handle.
+
 After bfloat16
 step 1, loss: 9.15673828125, dt: 91.79ms, tok/sec: 1394.44
 step 2, loss: 8.3017578125, dt: 91.46ms, tok/sec: 1399.53
@@ -21,6 +30,15 @@ step 7, loss: 4.4981689453125, dt: 91.01ms, tok/sec: 1406.47
 step 8, loss: 4.2840576171875, dt: 90.77ms, tok/sec: 1410.23
 step 9, loss: 4.08642578125, dt: 91.47ms, tok/sec: 1399.41
 step 10, loss: 3.970458984375, dt: 91.82ms, tok/sec: 1394.02
+
+=== Generated Text (Temperature = 0.7) ===
+The future future AI is time is are and null null object time time. Is the is be garbage will.
+
+=== Generated Text (Temperature = 1.0) ===
+Future the AI garbage is is function null null the is time disposal collector object.
+
+=== Generated Text (Temperature = 0.5) ===
+The AI garbage collector future is time null null handle memory the be the better disposal.  
 
 After switching to flash attention
 step 1, loss: 9.15771484375, dt: 83.26ms, tok/sec: 1537.27
@@ -34,6 +52,15 @@ step 8, loss: 4.24267578125, dt: 82.69ms, tok/sec: 1547.98
 step 9, loss: 4.023193359375, dt: 82.43ms, tok/sec: 1552.76
 step 10, loss: 4.329833984375, dt: 82.57ms, tok/sec: 1550.29
 
+=== Generated Text (Temperature = 0.7) ===
+The future of artificial intelligence is uncertain, but memory management is important. The Garbage Collector in programming languages like C# is key for cleaning unused objects.
+
+=== Generated Text (Temperature = 1.0) ===
+The future of artificial intelligence is about cleaning unused memory. Objects will be disposed efficiently by a garbage collector, improving performance. This is crucial for AI growth.
+
+=== Generated Text (Temperature = 0.5) ===
+The future of artificial intelligence involves using tools like the garbage collector to manage memory. In AI systems, proper memory management ensures better efficiency.
+
 After gradient clipping and learning rate scheduler
 step 1, loss: 9.415771484375, lr 1.2000e-04, norm: 7.2595, dt: 91.52ms, tok/sec: 1398.56
 step 2, loss: 8.35400390625, lr 1.8000e-04, norm: 7.1708, dt: 90.11ms, tok/sec: 1420.49
@@ -45,6 +72,15 @@ step 7, loss: 3.9395751953125, lr 4.8000e-04, norm: 17.2782, dt: 90.03ms, tok/se
 step 8, loss: 2.9708099365234375, lr 5.4000e-04, norm: 12.9161, dt: 92.10ms, tok/sec: 1389.76
 step 9, loss: 2.9598617553710938, lr 6.0000e-04, norm: 23.9009, dt: 90.97ms, tok/sec: 1407.06
 step 10, loss: 1.7027053833007812, lr 6.0000e-04, norm: 8.8673, dt: 90.42ms, tok/sec: 1415.61
+
+=== Generated Text (Temperature = 0.7) ===
+The future of artificial intelligence will rely on smarter memory handling and better resource management. Garbage collectors will play a role in maintaining system performance.
+
+=== Generated Text (Temperature = 1.0) ===
+The future of artificial intelligence is connected to how efficiently systems manage memory and dispose of unused objects. Garbage collection will evolve to meet AI's growing needs.
+
+=== Generated Text (Temperature = 0.5) ===
+Artificial intelligence in the future will depend on improved memory management. Garbage collectors ensure that unused data is cleaned, helping AI applications run smoothly.
 
 After weight decay and fused AdamW
 step 1, loss: 9.41650390625, lr 1.2000e-04, norm: 7.2595, dt: 70.55ms, tok/sec: 1814.42
@@ -58,6 +94,15 @@ step 8, loss: 2.9758987426757812, lr 5.4000e-04, norm: 12.8731, dt: 67.90ms, tok
 step 9, loss: 2.9892425537109375, lr 6.0000e-04, norm: 24.2579, dt: 68.23ms, tok/sec: 1876.04
 step 10, loss: 1.7214126586914062, lr 6.0000e-04, norm: 9.1152, dt: 67.71ms, tok/sec: 1890.53
 
+=== Generated Text (Temperature = 0.7) ===
+The future of artificial intelligence will depend on efficient algorithms and optimized memory management. With advancements in garbage collection, AI systems will run faster and handle larger tasks.
+
+=== Generated Text (Temperature = 1.0) ===
+The future of artificial intelligence lies in creating smarter, faster systems that can manage resources efficiently. Garbage collectors will evolve to free unused memory seamlessly, boosting AI performance.
+
+=== Generated Text (Temperature = 0.5) ===
+Artificial intelligence will benefit from improved memory management techniques. As garbage collection becomes more advanced, AI applications will achieve better speed and reliability.
+
 After gradient accumlation
 step 1, loss: 0.002310633659362793, lr 1.2000e-04, norm: 0.0018, dt: 74.29ms, tok/sec: 1722.94
 step 2, loss: 0.002062499523162842, lr 1.8000e-04, norm: 0.0016, dt: 76.53ms, tok/sec: 1672.60
@@ -69,3 +114,12 @@ step 7, loss: 0.0011592283844947815, lr 4.8000e-04, norm: 0.0027, dt: 67.75ms, t
 step 8, loss: 0.0011629611253738403, lr 5.4000e-04, norm: 0.0066, dt: 67.88ms, tok/sec: 1885.75
 step 9, loss: 0.0009995661675930023, lr 6.0000e-04, norm: 0.0044, dt: 70.09ms, tok/sec: 1826.25
 step 10, loss: 0.0007146615535020828, lr 6.0000e-04, norm: 0.0032, dt: 69.54ms, tok/sec: 1840.70
+
+=== Generated Text (Temperature = 0.7) ===
+The future of artificial intelligence is driven by innovations in resource management and system efficiency. Advanced garbage collection will enable AI models to scale, adapt, and perform complex tasks seamlessly.
+
+=== Generated Text (Temperature = 1.0) ===
+The future of artificial intelligence is not just about smarter models, but also about the infrastructure that supports them. By mastering efficient memory management through next-generation garbage collection, AI will reach new heights in scalability and performance.
+
+=== Generated Text (Temperature = 0.5) ===
+As artificial intelligence advances, efficient memory management through cutting-edge garbage collection will be vital. This ensures that AI systems remain scalable, fast, and capable of handling complex challenges.

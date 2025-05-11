@@ -229,7 +229,7 @@ input_path = os.path.join(script_dir, 'input.txt')
 with open(input_path, 'r', encoding='utf-8') as f:
     text = f.read()
 
-text = text[:1000]
+
 
 
 
@@ -237,7 +237,7 @@ tokens = enc.encode(text)
 
 # Create batches
 total_batch_size = 524288  # Total batch size in tokens
-B, T = 4, 32  # batch size and sequence length
+B, T = 8, 256  # batch size and sequence length
 # Make sure we have enough tokens for a complete batch
 if len(tokens) < B * T + 1:
     raise ValueError(f"Not enough tokens. Need at least {B*T+1}, but got {len(tokens)}")
@@ -264,7 +264,7 @@ model = model.to(device)
 max_lr = 6e-4
 min_lr = max_lr * 0.1
 warmup_steps = 10
-max_steps = 50
+max_steps = 1000    
 def get_lr(it):
     # 1) lineer ısınma adımları
     if it < warmup_steps:
@@ -336,7 +336,7 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
-sys.exit(0)
+
     # Forward pass
 try:
     logits, loss = model(x, targets=y)  # Pass y as targets
